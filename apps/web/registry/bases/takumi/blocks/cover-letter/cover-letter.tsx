@@ -133,6 +133,13 @@ const CoverLetterContent = ({ data }: { data: CoverLetterProps }) => {
   );
 };
 
+const stripUndefined = <T extends object>(obj?: T): Partial<T> =>
+  Object.fromEntries(
+    Object.entries((obj ?? {}) as Record<string, unknown>).filter(
+      ([, value]) => value !== undefined
+    )
+  ) as Partial<T>;
+
 export const CoverLetterDocument = ({
   theme,
   data,
@@ -140,8 +147,26 @@ export const CoverLetterDocument = ({
 }: {
   theme?: PdfcnTheme;
   data?: CoverLetterProps;
-} & Partial<CoverLetterProps>) => (
-  <PdfcnThemeProvider theme={theme}>
-    <CoverLetterContent data={{ ...sampleData, ...data, ...props }} />
-  </PdfcnThemeProvider>
-);
+} & Partial<CoverLetterProps>) => {
+  const definedData = stripUndefined(data);
+  const definedProps = stripUndefined(props);
+  const merged: CoverLetterProps = {
+    ...sampleData,
+    ...definedData,
+    ...definedProps,
+  };
+  // The sample highlight is a preview aid: when the caller supplies their
+  // own letter data without a highlight, do not leak the sample quote in.
+  if (
+    (data !== undefined || Object.keys(props).length > 0) &&
+    definedData.highlight === undefined &&
+    definedProps.highlight === undefined
+  ) {
+    delete merged.highlight;
+  }
+  return (
+    <PdfcnThemeProvider theme={theme}>
+      <CoverLetterContent data={merged} />
+    </PdfcnThemeProvider>
+  );
+};

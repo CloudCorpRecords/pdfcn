@@ -47,6 +47,24 @@ npm install takumi-pdf @takumi-rs/helpers
 />
 
 <ComponentSource
+  src="registry/bases/takumi/components/page-footer/page-footer.tsx"
+  base="takumi"
+  title="components/pdf/page-footer/page-footer.tsx"
+/>
+
+<ComponentSource
+  src="registry/bases/takumi/components/section/section.tsx"
+  base="takumi"
+  title="components/pdf/section/section.tsx"
+/>
+
+<ComponentSource
+  src="registry/bases/takumi/components/text/text.tsx"
+  base="takumi"
+  title="components/pdf/text/text.tsx"
+/>
+
+<ComponentSource
   src="registry/bases/takumi/components/theme-provider.tsx"
   base="takumi"
   title="components/pdf/theme-provider.tsx"
@@ -105,7 +123,7 @@ npm install takumi-pdf @takumi-rs/helpers
 ## Usage
 
 ```tsx
-import { CoverLetterDocument } from "@/components/pdf/cover-letter";
+import { CoverLetterDocument } from "@/components/pdf/blocks/cover-letter/cover-letter";
 ```
 
 ```tsx
