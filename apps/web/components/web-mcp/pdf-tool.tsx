@@ -7,7 +7,6 @@ import { SITE } from "@/constants/site";
 const BLOCK_NAMES = [
   "event-ticket",
   "gift-certificate",
-  "business-letter",
   "invoice-classic",
   "invoice-consultant",
   "invoice-corporate",

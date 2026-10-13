@@ -1,5 +1,4 @@
 import { PageFooter } from "@/registry/bases/takumi/components/page-footer/page-footer";
-import { PageHeader } from "@/registry/bases/takumi/components/page-header/page-header";
 import { PdfImage } from "@/registry/bases/takumi/components/pdf-image/pdf-image";
 import { Section } from "@/registry/bases/takumi/components/section/section";
 import { Text } from "@/registry/bases/takumi/components/text/text";
@@ -11,6 +10,7 @@ import {
   Document,
   Page,
   StyleSheet,
+  View,
 } from "@/registry/bases/takumi/lib/pdf-primitives";
 import type { PdfcnTheme } from "@/registry/types/pdf-themes";
 
@@ -40,6 +40,21 @@ const BusinessLetterContent = ({ data }: { data: BusinessLetterProps }) => {
   const theme = usePdfcnTheme();
 
   const styles = StyleSheet.create({
+    letterhead: {
+      alignItems: "center",
+      borderBottomColor: theme.colors.border,
+      borderBottomStyle: "solid",
+      borderBottomWidth: 1,
+      display: "flex",
+      flexDirection: "column",
+      paddingBottom: 12,
+    },
+    logo: {
+      height: 48,
+      margin: 0,
+      marginBottom: 6,
+      width: 48,
+    },
     page: {
       backgroundColor: theme.colors.background,
       boxSizing: "border-box",
@@ -61,19 +76,30 @@ const BusinessLetterContent = ({ data }: { data: BusinessLetterProps }) => {
   return (
     <Document title={`Business Letter — ${data.companyName}`}>
       <Page size="A4" style={styles.page}>
-        <PageHeader
-          variant="centered"
-          logo={
-            data.companyLogo ? (
-              <PdfImage src={data.companyLogo} style={{ margin: 0 }} />
-            ) : undefined
-          }
-          title={data.companyName}
-          titleColor={data.accentColor}
-          subtitle={data.companyTagline}
-          address={data.companyAddress}
-          style={{ marginBottom: 0 }}
-        />
+        <View style={styles.letterhead}>
+          {data.companyLogo && (
+            <PdfImage src={data.companyLogo} style={styles.logo} />
+          )}
+          <Text
+            variant="2xl"
+            weight="bold"
+            align="center"
+            color={data.accentColor}
+            noMargin
+          >
+            {data.companyName}
+          </Text>
+          {data.companyTagline && (
+            <Text variant="sm" align="center" color="mutedForeground" noMargin>
+              {data.companyTagline}
+            </Text>
+          )}
+          {data.companyAddress && (
+            <Text variant="xs" align="center" color="mutedForeground" noMargin>
+              {data.companyAddress}
+            </Text>
+          )}
+        </View>
         <Section spacing="none">
           <Text variant="sm" color="mutedForeground" noMargin>
             {data.date}
@@ -126,6 +152,13 @@ const BusinessLetterContent = ({ data }: { data: BusinessLetterProps }) => {
   );
 };
 
+const stripUndefined = <T extends object>(obj?: T): Partial<T> =>
+  Object.fromEntries(
+    Object.entries((obj ?? {}) as Record<string, unknown>).filter(
+      ([, value]) => value !== undefined
+    )
+  ) as Partial<T>;
+
 export const BusinessLetterDocument = ({
   theme,
   data,
@@ -135,6 +168,12 @@ export const BusinessLetterDocument = ({
   data?: BusinessLetterProps;
 } & Partial<BusinessLetterProps>) => (
   <PdfcnThemeProvider theme={theme}>
-    <BusinessLetterContent data={{ ...sampleData, ...data, ...props }} />
+    <BusinessLetterContent
+      data={{
+        ...sampleData,
+        ...stripUndefined(data),
+        ...stripUndefined(props),
+      }}
+    />
   </PdfcnThemeProvider>
 );
