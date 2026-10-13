@@ -184,7 +184,7 @@ const ResumeContent = ({ data }: { data: ResumeProps }) => {
           </Text>
           {data.experience.map((entry) => (
             <View
-              key={`${entry.period}-${entry.title}`}
+              key={`${entry.company}-${entry.title}-${entry.period}`}
               style={styles.experienceRow}
             >
               <Text
@@ -232,7 +232,7 @@ const ResumeContent = ({ data }: { data: ResumeProps }) => {
           </Text>
           {data.education.map((entry) => (
             <View
-              key={`${entry.degree}-${entry.school}`}
+              key={`${entry.degree}-${entry.school}-${entry.year ?? ""}`}
               style={styles.educationRow}
             >
               <View>
@@ -259,6 +259,13 @@ const ResumeContent = ({ data }: { data: ResumeProps }) => {
   );
 };
 
+const stripUndefined = <T extends object>(obj?: T): Partial<T> =>
+  Object.fromEntries(
+    Object.entries((obj ?? {}) as Record<string, unknown>).filter(
+      ([, value]) => value !== undefined
+    )
+  ) as Partial<T>;
+
 export const ResumeDocument = ({
   theme,
   data,
@@ -268,6 +275,12 @@ export const ResumeDocument = ({
   data?: ResumeProps;
 } & Partial<ResumeProps>) => (
   <PdfcnThemeProvider theme={theme}>
-    <ResumeContent data={{ ...sampleData, ...data, ...props }} />
+    <ResumeContent
+      data={{
+        ...sampleData,
+        ...stripUndefined(data),
+        ...stripUndefined(props),
+      }}
+    />
   </PdfcnThemeProvider>
 );

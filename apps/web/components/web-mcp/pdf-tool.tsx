@@ -22,7 +22,6 @@ const BLOCK_NAMES = [
   "report-marketing",
   "report-operations",
   "report-security",
-  "resume",
   "shipping-label",
   "work-order",
 ];
