@@ -1325,7 +1325,6 @@
       "registryDependencies": [
         "@pdfcn/takumi/utils",
         "@pdfcn/takumi/page-footer",
-        "@pdfcn/takumi/page-header",
         "@pdfcn/takumi/pdf-image",
         "@pdfcn/takumi/section",
         "@pdfcn/takumi/text"
