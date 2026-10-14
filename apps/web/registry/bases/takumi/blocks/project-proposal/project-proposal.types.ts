@@ -25,11 +25,11 @@ export interface ProjectProposalProps {
   client: string;
   projectTitle: string;
   date: string;
-  stats: ProjectProposalStat[];
-  deliverables: string[];
-  milestones: ProjectProposalMilestone[];
-  budget: ProjectProposalBudgetSlice[];
-  nextSteps: ProjectProposalNextStep[];
+  stats?: ProjectProposalStat[];
+  deliverables?: string[];
+  milestones?: ProjectProposalMilestone[];
+  budget?: ProjectProposalBudgetSlice[];
+  nextSteps?: ProjectProposalNextStep[];
   accentColor?: string;
-  renderingBase?: "takumi" | "forme";
+  renderingBase?: "takumi";
 }
