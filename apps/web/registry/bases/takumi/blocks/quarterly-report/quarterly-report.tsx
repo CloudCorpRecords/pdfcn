@@ -21,7 +21,8 @@ import type { PdfcnTheme } from "@/registry/types/pdf-themes";
 
 import type { QuarterlyReportProps } from "./quarterly-report.types";
 
-// Sample data — replace with your own props or data source
+// Sample data — renders only for the no-props preview; replace with your
+// own props or data source
 const sampleData: QuarterlyReportProps = {
   accentColor: "#2563eb",
   breakdown: {
@@ -34,10 +35,7 @@ const sampleData: QuarterlyReportProps = {
     title: "Customers by region",
   },
   company: "Aurora Analytics",
-  highlights: [
-    "Enterprise plan launched in July.",
-    "Three new partners in APAC.",
-  ],
+  highlights: ["Enterprise plan launched in July.", "Three new partners in APAC."],
   priorities: [
     { label: "Self-serve onboarding", value: 70 },
     { label: "SOC 2 Type II", value: 45 },
@@ -119,170 +117,196 @@ const QuarterlyReportContent = ({ data }: { data: QuarterlyReportProps }) => {
   });
 
   const accent = data.accentColor ?? theme.colors.primary;
+  const hasStats = (data.stats ?? []).length > 0;
+  const hasHighlights = (data.highlights ?? []).length > 0;
+  const hasWatchList = (data.watchList ?? []).length > 0;
+  const hasPriorities = (data.priorities ?? []).length > 0;
+  const footerCenter = [data.company, data.quarter]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <Document title={`${data.quarter} / Quarterly business review`}>
       <Page size="A4" style={styles.page}>
         <PageHeader
-          variant="two-column"
+          variant="simple"
           title={`${data.quarter} / Quarterly business review`}
           subtitle={data.subtitle}
           rightText={data.company}
           marginBottom={14}
         />
-        <Section spacing="sm">
-          <View style={styles.statRow}>
-            {data.stats.map((stat) => (
-              <View key={`${stat.label}-${stat.value}`} style={styles.statTile}>
-                <Text
-                  variant="xs"
-                  weight="semibold"
-                  transform="uppercase"
-                  color="mutedForeground"
-                  noMargin
+        {hasStats && (
+          <Section spacing="sm">
+            <View style={styles.statRow}>
+              {(data.stats ?? []).map((stat) => (
+                <View
+                  key={`${stat.label}-${stat.value}`}
+                  style={styles.statTile}
                 >
-                  {stat.label}
-                </Text>
-                <Text variant="xl" weight="bold" color={accent} noMargin>
-                  {stat.value}
-                </Text>
-                {stat.note && (
-                  <Text variant="xs" color="mutedForeground" noMargin>
-                    {stat.note}
+                  <Text
+                    variant="xs"
+                    weight="semibold"
+                    transform="uppercase"
+                    color="mutedForeground"
+                    noMargin
+                  >
+                    {stat.label}
                   </Text>
-                )}
-              </View>
-            ))}
-          </View>
-        </Section>
-        <Section spacing="sm">
-          <KeepTogether>
-            <Text
-              style={styles.heading}
-              color={accent}
-              transform="uppercase"
-              noMargin
-            >
-              {data.trend.title}
-            </Text>
-            <PdfGraph
-              variant="line"
-              data={[
-                {
-                  color: accent,
-                  data: data.trend.data.map((point) => ({
-                    label: point.label,
-                    value: point.value,
-                  })),
-                  name: data.trend.seriesName,
-                },
-              ]}
-              legend="bottom"
-              showDots
-              smooth
-              height={220}
-            />
-          </KeepTogether>
-        </Section>
-        <Section spacing="sm">
-          <Stack direction="horizontal" gap="md">
-            <View style={styles.column}>
+                  <Text variant="xl" weight="bold" color={accent} noMargin>
+                    {stat.value}
+                  </Text>
+                  {stat.note && (
+                    <Text variant="xs" color="mutedForeground" noMargin>
+                      {stat.note}
+                    </Text>
+                  )}
+                </View>
+              ))}
+            </View>
+          </Section>
+        )}
+        {data.trend && (
+          <Section spacing="sm">
+            <KeepTogether>
               <Text
                 style={styles.heading}
                 color={accent}
                 transform="uppercase"
                 noMargin
               >
-                Highlights
+                {data.trend.title}
               </Text>
-              <PdfList
-                variant="bullet"
-                items={data.highlights.map((highlight) => ({
-                  text: highlight,
-                }))}
+              <PdfGraph
+                variant="line"
+                data={[
+                  {
+                    color: accent,
+                    data: data.trend.data.map((point) => ({
+                      label: point.label,
+                      value: point.value,
+                    })),
+                    name: data.trend.seriesName,
+                  },
+                ]}
+                legend="bottom"
+                showDots
+                smooth
+                height={220}
               />
-            </View>
-            <View style={styles.column}>
-              <Text
-                style={styles.heading}
-                color={accent}
-                transform="uppercase"
-                noMargin
-              >
-                Watch list
-              </Text>
-              <PdfList
-                variant="bullet"
-                items={data.watchList.map((item) => ({ text: item }))}
-              />
-            </View>
-          </Stack>
-        </Section>
-        <Section spacing="sm">
-          <KeepTogether>
-            <Text
-              style={styles.heading}
-              color={accent}
-              transform="uppercase"
-              noMargin
-            >
-              {data.breakdown.title}
-            </Text>
-            <PdfGraph
-              variant="bar"
-              data={data.breakdown.data.map((point) => ({
-                label: point.label,
-                value: point.value,
-              }))}
-              colors={[accent]}
-              showValues
-              height={220}
-            />
-          </KeepTogether>
-        </Section>
-        <Section spacing="sm">
-          <KeepTogether>
-            <Text
-              style={styles.heading}
-              color={accent}
-              transform="uppercase"
-              noMargin
-            >
-              Priorities for next quarter
-            </Text>
-            {data.priorities.map((priority) => (
-              <View
-                key={`${priority.label}-${priority.value}`}
-                style={styles.priorityRow}
-              >
-                <Stack direction="horizontal" justify="between">
-                  <Text variant="sm" weight="semibold" noMargin>
-                    {priority.label}
+            </KeepTogether>
+          </Section>
+        )}
+        {(hasHighlights || hasWatchList) && (
+          <Section spacing="sm">
+            <Stack direction="horizontal" gap="md">
+              {hasHighlights && (
+                <View style={styles.column}>
+                  <Text
+                    style={styles.heading}
+                    color={accent}
+                    transform="uppercase"
+                    noMargin
+                  >
+                    Highlights
                   </Text>
-                  <Text variant="sm" color="mutedForeground" noMargin>
-                    {`${clampPriority(priority.value)}%`}
-                  </Text>
-                </Stack>
-                <View style={styles.priorityTrack}>
-                  <View
-                    style={[
-                      styles.priorityFill,
-                      {
-                        backgroundColor: accent,
-                        height: 8,
-                        width: `${clampPriority(priority.value)}%`,
-                      },
-                    ]}
+                  <PdfList
+                    variant="bullet"
+                    items={(data.highlights ?? []).map((highlight) => ({
+                      text: highlight,
+                    }))}
                   />
                 </View>
-              </View>
-            ))}
-          </KeepTogether>
-        </Section>
+              )}
+              {hasWatchList && (
+                <View style={styles.column}>
+                  <Text
+                    style={styles.heading}
+                    color={accent}
+                    transform="uppercase"
+                    noMargin
+                  >
+                    Watch list
+                  </Text>
+                  <PdfList
+                    variant="bullet"
+                    items={(data.watchList ?? []).map((item) => ({
+                      text: item,
+                    }))}
+                  />
+                </View>
+              )}
+            </Stack>
+          </Section>
+        )}
+        {data.breakdown && (
+          <Section spacing="sm">
+            <KeepTogether>
+              <Text
+                style={styles.heading}
+                color={accent}
+                transform="uppercase"
+                noMargin
+              >
+                {data.breakdown.title}
+              </Text>
+              <PdfGraph
+                variant="bar"
+                data={data.breakdown.data.map((point) => ({
+                  label: point.label,
+                  value: point.value,
+                }))}
+                colors={[accent]}
+                showValues
+                height={220}
+              />
+            </KeepTogether>
+          </Section>
+        )}
+        {hasPriorities && (
+          <Section spacing="sm">
+            <KeepTogether>
+              <Text
+                style={styles.heading}
+                color={accent}
+                transform="uppercase"
+                noMargin
+              >
+                Priorities for next quarter
+              </Text>
+              {(data.priorities ?? []).map((priority) => (
+                <View
+                  key={`${priority.label}-${priority.value}`}
+                  style={styles.priorityRow}
+                >
+                  <Stack direction="horizontal" justify="between">
+                    <Text variant="sm" weight="semibold" noMargin>
+                      {priority.label}
+                    </Text>
+                    <Text variant="sm" color="mutedForeground" noMargin>
+                      {`${clampPriority(priority.value)}%`}
+                    </Text>
+                  </Stack>
+                  <View style={styles.priorityTrack}>
+                    <View
+                      style={[
+                        styles.priorityFill,
+                        {
+                          backgroundColor: accent,
+                          height: 8,
+                          width: `${clampPriority(priority.value)}%`,
+                        },
+                      ]}
+                    />
+                  </View>
+                </View>
+              ))}
+            </KeepTogether>
+          </Section>
+        )}
         <PageFooter
-          variant="three-column"
+          variant="simple"
           leftText="Confidential — Internal Use"
-          centerText={`${data.company} · ${data.quarter}`}
+          centerText={footerCenter}
           rightText={<PageNumber size="xs" />}
           sticky
           pagePadding={theme.spacing.page.marginLeft}
@@ -309,15 +333,24 @@ export const QuarterlyReportDocument = ({
 } & Partial<QuarterlyReportProps>) => {
   const callerData = { ...stripUndefined(data), ...stripUndefined(props) };
   const hasCallerData = Object.keys(callerData).length > 0;
+  // Strict model: sample data renders ONLY when no caller data is supplied.
+  // On the caller path the document is built purely from the caller: content
+  // sections are optional and render only when provided, so sample content
+  // can never backfill a caller's report. Identity fields fall back to ""
+  // (never the sample company), and only the accent color keeps a built-in
+  // style default.
   const merged: QuarterlyReportProps = hasCallerData
     ? {
-        ...sampleData,
-        ...callerData,
-        // Identity belongs to the caller's report. When a caller supplies
-        // report data, the company and quarter come only from the caller:
-        // the sample company's details must never leak in.
+        accentColor: callerData.accentColor,
+        breakdown: callerData.breakdown,
         company: callerData.company ?? "",
+        highlights: callerData.highlights,
+        priorities: callerData.priorities,
         quarter: callerData.quarter ?? "",
+        stats: callerData.stats,
+        subtitle: callerData.subtitle,
+        trend: callerData.trend,
+        watchList: callerData.watchList,
       }
     : sampleData;
   return (
