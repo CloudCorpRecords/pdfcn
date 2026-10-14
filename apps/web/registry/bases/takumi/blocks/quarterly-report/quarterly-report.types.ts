@@ -29,12 +29,12 @@ export interface QuarterlyReportProps {
   company: string;
   quarter: string;
   subtitle?: string;
-  stats: QuarterlyReportStat[];
-  trend: QuarterlyReportTrend;
-  highlights: string[];
-  watchList: string[];
-  breakdown: QuarterlyReportBreakdown;
-  priorities: QuarterlyReportPriority[];
+  stats?: QuarterlyReportStat[];
+  trend?: QuarterlyReportTrend;
+  highlights?: string[];
+  watchList?: string[];
+  breakdown?: QuarterlyReportBreakdown;
+  priorities?: QuarterlyReportPriority[];
   accentColor?: string;
-  renderingBase?: "takumi" | "forme";
+  renderingBase?: "takumi";
 }
