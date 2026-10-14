@@ -179,7 +179,7 @@ export const BusinessLetterDocument = ({
         // the sample company's details.
         companyAddress: callerData.companyAddress,
         companyLogo: callerData.companyLogo,
-        companyName: callerData.companyName as string,
+        companyName: callerData.companyName ?? "",
         companyTagline: callerData.companyTagline,
       }
     : sampleData;
