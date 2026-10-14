@@ -53,21 +53,33 @@ npm install takumi-pdf @takumi-rs/helpers
 />
 
 <ComponentSource
+  src="registry/bases/takumi/components/graph/graph.styles.ts"
+  base="takumi"
+  title="components/pdf/graph/graph.styles.ts"
+/>
+
+<ComponentSource
+  src="registry/bases/takumi/components/graph/graph.types.ts"
+  base="takumi"
+  title="components/pdf/graph/graph.types.ts"
+/>
+
+<ComponentSource
+  src="registry/bases/takumi/components/graph/graph.utils.ts"
+  base="takumi"
+  title="components/pdf/graph/graph.utils.ts"
+/>
+
+<ComponentSource
   src="registry/bases/takumi/components/keep-together/keep-together.tsx"
   base="takumi"
   title="components/pdf/keep-together/keep-together.tsx"
 />
 
 <ComponentSource
-  src="registry/bases/takumi/components/list/list.tsx"
+  src="registry/bases/takumi/components/page-number/page-number.tsx"
   base="takumi"
-  title="components/pdf/list/list.tsx"
-/>
-
-<ComponentSource
-  src="registry/bases/takumi/components/page-footer/page-footer.tsx"
-  base="takumi"
-  title="components/pdf/page-footer/page-footer.tsx"
+  title="components/pdf/page-number/page-number.tsx"
 />
 
 <ComponentSource
@@ -185,3 +197,13 @@ import { ProjectProposalDocument } from "@/components/pdf/blocks/project-proposa
   ]}
 />
 ```
+
+## Notes
+
+- **Repeating chrome.** The header (company and project title) and footer
+  (company, client, date, and `Page X of Y`) are rendered as `fixed` elements,
+  so they repeat on every page of multi-page proposals.
+- **Caller data.** Sample data renders only when no props are passed. When you
+  pass any props, content sections (stats, deliverables, milestones, budget,
+  next steps) render only if you provide them, and identity fields (company,
+  client, title, date) come only from your props.
