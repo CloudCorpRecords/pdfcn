@@ -1326,8 +1326,7 @@
         "@pdfcn/takumi/utils",
         "@pdfcn/takumi/graph",
         "@pdfcn/takumi/keep-together",
-        "@pdfcn/takumi/list",
-        "@pdfcn/takumi/page-footer",
+        "@pdfcn/takumi/page-number",
         "@pdfcn/takumi/section",
         "@pdfcn/takumi/signature",
         "@pdfcn/takumi/text"
