@@ -376,33 +376,33 @@ const ProjectProposalContent = ({ data }: { data: ProjectProposalProps }) => {
                 colors={budgetPalette}
                 height={220}
               />
-              {budget.map((slice, index) => {
-                const color = budgetPalette[index % budgetPalette.length];
-                const percent =
-                  budgetTotal > 0 ? (slice.value / budgetTotal) * 100 : 0;
-                return (
+            </KeepTogether>
+            {budget.map((slice, index) => {
+              const color = budgetPalette[index % budgetPalette.length];
+              const percent =
+                budgetTotal > 0 ? (slice.value / budgetTotal) * 100 : 0;
+              return (
+                <View
+                  key={`${slice.label}-${slice.value}`}
+                  style={styles.legendRow}
+                >
                   <View
-                    key={`${slice.label}-${slice.value}`}
-                    style={styles.legendRow}
-                  >
-                    <View
-                      style={[styles.legendSwatch, { backgroundColor: color }]}
-                    />
-                    <View style={styles.flexOne}>
-                      <Text variant="sm" noMargin>
-                        {slice.label}
-                      </Text>
-                    </View>
-                    <Text variant="sm" color="mutedForeground" noMargin>
-                      {`${slice.value}`}
-                    </Text>
-                    <Text variant="sm" weight="semibold" noMargin>
-                      {`${percent.toFixed(1)}%`}
+                    style={[styles.legendSwatch, { backgroundColor: color }]}
+                  />
+                  <View style={styles.flexOne}>
+                    <Text variant="sm" noMargin>
+                      {slice.label}
                     </Text>
                   </View>
-                );
-              })}
-            </KeepTogether>
+                  <Text variant="sm" color="mutedForeground" noMargin>
+                    {`${slice.value}`}
+                  </Text>
+                  <Text variant="sm" weight="semibold" noMargin>
+                    {`${percent.toFixed(1)}%`}
+                  </Text>
+                </View>
+              );
+            })}
           </Section>
         )}
         {data.nextSteps && data.nextSteps.length > 0 && (
