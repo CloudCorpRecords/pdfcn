@@ -179,3 +179,18 @@ import { ResumeDocument } from "@/components/pdf/blocks/resume/resume";
   ]}
 />
 ```
+
+## One-page fit policy
+
+The Resume block is a single-page document, so it estimates the rendered
+height of your content before rendering and adapts the layout to fit one
+A4 page:
+
+- **Comfortable**: standard spacing and body text for typical resumes.
+- **Compact** and **dense**: progressively tighter page padding, row
+  spacing and body text size, so a long summary or several experience
+  entries still fit.
+- **Oversize**: content beyond the dense budget renders a visible
+  "does not fit on one page" notice with the estimated overflow, instead
+  of spilling onto a second page or clipping silently. Shorten the
+  summary, trim experience details, or remove entries and render again.

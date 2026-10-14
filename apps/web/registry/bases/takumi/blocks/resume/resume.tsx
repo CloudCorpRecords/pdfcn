@@ -65,8 +65,85 @@ const sampleData: ResumeProps = {
     "Product designer with nine years of experience shipping consumer and B2B software. I turn fuzzy problems into simple, measurable products.",
 };
 
+// One-page fit policy (issue #61: the Resume block is a single-page
+// document). Content volume is estimated in points against the A4 page
+// (841pt tall, 36pt padding). Average resumes render at the comfortable
+// density; heavier ones step down to compact and dense layouts that
+// tighten padding, row spacing and body text so realistic content still
+// fits. Content beyond the dense budget returns a visible oversize
+// notice instead of silently spilling onto a second page.
+const PAGE_CONTENT_HEIGHT = 769;
+const COMPACT_LIMIT = 884;
+const DENSE_LIMIT = 1038;
+
+type FitDensity = "comfortable" | "compact" | "dense";
+
+const estimateLines = (chars: number, perLine: number) =>
+  Math.max(1, Math.ceil(chars / perLine));
+
+const estimateContentHeight = (data: ResumeProps): number => {
+  // Header, contact line, four section headings with spacing, footer.
+  let height = 150;
+  height += estimateLines(data.summary.length, 100) * 15;
+  for (const entry of data.experience) {
+    height += 25 + estimateLines(entry.details.length, 78) * 15;
+  }
+  height += Math.ceil(data.skills.length / 6) * 22;
+  height += data.education.length * 32;
+  return height;
+};
+
+const densityFor = (height: number): FitDensity | "oversize" => {
+  if (height <= PAGE_CONTENT_HEIGHT) {
+    return "comfortable";
+  }
+  if (height <= COMPACT_LIMIT) {
+    return "compact";
+  }
+  if (height <= DENSE_LIMIT) {
+    return "dense";
+  }
+  return "oversize";
+};
+
+const densityStyles: Record<
+  FitDensity,
+  {
+    bodyFontSize: number;
+    bodyLineHeight: number;
+    educationMargin: number;
+    experienceMargin: number;
+    pagePadding: number;
+  }
+> = {
+  comfortable: {
+    bodyFontSize: 10,
+    bodyLineHeight: 1.45,
+    educationMargin: 6,
+    experienceMargin: 10,
+    pagePadding: 36,
+  },
+  compact: {
+    bodyFontSize: 9.5,
+    bodyLineHeight: 1.35,
+    educationMargin: 4,
+    experienceMargin: 7,
+    pagePadding: 30,
+  },
+  dense: {
+    bodyFontSize: 9,
+    bodyLineHeight: 1.28,
+    educationMargin: 3,
+    experienceMargin: 5,
+    pagePadding: 26,
+  },
+};
+
 const ResumeContent = ({ data }: { data: ResumeProps }) => {
   const theme = usePdfcnTheme();
+  const estimatedHeight = estimateContentHeight(data);
+  const density = densityFor(estimatedHeight);
+  const fit = densityStyles[density === "oversize" ? "dense" : density];
 
   const styles = StyleSheet.create({
     contactLine: {
@@ -77,13 +154,13 @@ const ResumeContent = ({ data }: { data: ResumeProps }) => {
       display: "flex",
       flexDirection: "row",
       justifyContent: "space-between",
-      marginBottom: 6,
+      marginBottom: fit.educationMargin,
     },
     experienceRow: {
       alignItems: "flex-start",
       display: "flex",
       flexDirection: "row",
-      marginBottom: 10,
+      marginBottom: fit.experienceMargin,
     },
     headerRow: {
       alignItems: "flex-start",
@@ -96,11 +173,20 @@ const ResumeContent = ({ data }: { data: ResumeProps }) => {
       fontWeight: "bold",
       marginBottom: 4,
     },
+    notice: {
+      borderColor: theme.colors.border,
+      borderStyle: "solid",
+      borderWidth: 1,
+      padding: 16,
+    },
+    noticeBody: {
+      marginTop: 6,
+    },
     page: {
       backgroundColor: theme.colors.background,
       boxSizing: "border-box",
       minHeight: 841,
-      padding: 36,
+      padding: fit.pagePadding,
       position: "relative",
     },
     period: {
@@ -129,6 +215,27 @@ const ResumeContent = ({ data }: { data: ResumeProps }) => {
     (part): part is string => typeof part === "string" && part.length > 0
   );
   const accent = data.accentColor ?? "primary";
+  const bodyTextStyle = {
+    fontSize: fit.bodyFontSize,
+    lineHeight: fit.bodyLineHeight,
+  };
+
+  if (density === "oversize") {
+    return (
+      <Document title={`Resume — ${data.name}`}>
+        <Page size="A4" style={styles.page}>
+          <View style={styles.notice}>
+            <Text variant="base" weight="bold" noMargin>
+              This resume does not fit on one page
+            </Text>
+            <Text variant="sm" style={styles.noticeBody} noMargin>
+              {`The Resume block renders a single A4 page, and this content is about ${Math.round(((estimatedHeight - PAGE_CONTENT_HEIGHT) / PAGE_CONTENT_HEIGHT) * 100)} percent over the one-page budget even at the densest layout. Shorten the summary, trim the experience details, or remove entries, then render again. Nothing was clipped or dropped silently.`}
+            </Text>
+          </View>
+        </Page>
+      </Document>
+    );
+  }
 
   return (
     <Document title={`Resume — ${data.name}`}>
@@ -169,7 +276,7 @@ const ResumeContent = ({ data }: { data: ResumeProps }) => {
           >
             Summary
           </Text>
-          <Text variant="sm" noMargin>
+          <Text variant="sm" style={bodyTextStyle} noMargin>
             {data.summary}
           </Text>
         </Section>
@@ -199,7 +306,7 @@ const ResumeContent = ({ data }: { data: ResumeProps }) => {
                 <Text variant="sm" weight="semibold" noMargin>
                   {`${entry.title} · ${entry.company}`}
                 </Text>
-                <Text variant="sm" noMargin>
+                <Text variant="sm" style={bodyTextStyle} noMargin>
                   {entry.details}
                 </Text>
               </View>
