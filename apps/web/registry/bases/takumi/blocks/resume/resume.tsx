@@ -81,6 +81,25 @@ type FitDensity = "comfortable" | "compact" | "dense";
 const estimateLines = (chars: number, perLine: number) =>
   Math.max(1, Math.ceil(chars / perLine));
 
+// Skill badges wrap by content width, not by count: a row of short
+// labels fits far more badges than a row of wide ones. Simulate the
+// greedy wrap against the comfortable content width (523pt) using an
+// average glyph width for the small badge text plus badge padding.
+const estimateSkillRows = (skills: string[]): number => {
+  let rows = 0;
+  let used = 0;
+  for (const skill of skills) {
+    const badgeWidth = Math.ceil(skill.length * 4.6) + 16;
+    if (rows === 0 || used + 6 + badgeWidth > 523) {
+      rows += 1;
+      used = badgeWidth;
+    } else {
+      used += 6 + badgeWidth;
+    }
+  }
+  return rows;
+};
+
 const estimateContentHeight = (data: ResumeProps): number => {
   // Header, contact line, four section headings with spacing, footer.
   let height = 150;
@@ -88,7 +107,7 @@ const estimateContentHeight = (data: ResumeProps): number => {
   for (const entry of data.experience) {
     height += 25 + estimateLines(entry.details.length, 78) * 15;
   }
-  height += Math.ceil(data.skills.length / 6) * 22;
+  height += estimateSkillRows(data.skills) * 20;
   height += data.education.length * 32;
   return height;
 };
@@ -229,7 +248,7 @@ const ResumeContent = ({ data }: { data: ResumeProps }) => {
               This resume does not fit on one page
             </Text>
             <Text variant="sm" style={styles.noticeBody} noMargin>
-              {`The Resume block renders a single A4 page, and this content is about ${Math.round(((estimatedHeight - PAGE_CONTENT_HEIGHT) / PAGE_CONTENT_HEIGHT) * 100)} percent over the one-page budget even at the densest layout. Shorten the summary, trim the experience details, or remove entries, then render again. Nothing was clipped or dropped silently.`}
+              {`The Resume block renders a single A4 page, and this content is about ${(((estimatedHeight - DENSE_LIMIT) / DENSE_LIMIT) * 100).toFixed(1)} percent over the one-page budget even at the densest layout. Shorten the summary, trim the experience details, or remove entries, then render again. Nothing was clipped or dropped silently.`}
             </Text>
           </View>
         </Page>
