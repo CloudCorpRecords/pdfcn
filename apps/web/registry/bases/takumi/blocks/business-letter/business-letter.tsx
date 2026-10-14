@@ -166,14 +166,26 @@ export const BusinessLetterDocument = ({
 }: {
   theme?: PdfcnTheme;
   data?: BusinessLetterProps;
-} & Partial<BusinessLetterProps>) => (
-  <PdfcnThemeProvider theme={theme}>
-    <BusinessLetterContent
-      data={{
+} & Partial<BusinessLetterProps>) => {
+  const callerData = { ...stripUndefined(data), ...stripUndefined(props) };
+  const hasCallerData = Object.keys(callerData).length > 0;
+  const merged: BusinessLetterProps = hasCallerData
+    ? {
         ...sampleData,
-        ...stripUndefined(data),
-        ...stripUndefined(props),
-      }}
-    />
-  </PdfcnThemeProvider>
-);
+        ...callerData,
+        // Branding belongs to the company sending the letter. When a
+        // caller supplies letter data, branding fields come only from the
+        // caller: an omitted tagline or address must never fall back to
+        // the sample company's details.
+        companyAddress: callerData.companyAddress,
+        companyLogo: callerData.companyLogo,
+        companyName: callerData.companyName as string,
+        companyTagline: callerData.companyTagline,
+      }
+    : sampleData;
+  return (
+    <PdfcnThemeProvider theme={theme}>
+      <BusinessLetterContent data={merged} />
+    </PdfcnThemeProvider>
+  );
+};
