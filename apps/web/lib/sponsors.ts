@@ -1,6 +1,3 @@
-import { UTM_PARAMS } from "@/constants/site";
-import { addQueryParams } from "@/lib/url";
-
 export interface Sponsor {
   name: string;
   href: string;
@@ -8,15 +5,6 @@ export interface Sponsor {
   logoLight?: string;
   logoDark?: string;
 }
-
-const REACT_BITS_PRO: Sponsor = {
-  href: addQueryParams("https://pro.reactbits.dev", {
-    ...UTM_PARAMS.SOURCE,
-    ...UTM_PARAMS.SPONSOR,
-  }),
-  logo: "/sponsors/reactbitpro.svg",
-  name: "React Bits Pro",
-};
 
 export const tiers = [
   {
@@ -29,7 +17,7 @@ export const tiers = [
     },
     name: "Gold",
     slots: 3,
-    sponsors: [REACT_BITS_PRO] as Sponsor[],
+    sponsors: [] as Sponsor[],
   },
   {
     colors: {

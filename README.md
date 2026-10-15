@@ -59,27 +59,6 @@ Please do not open public issues for security vulnerabilities. Follow [SECURITY.
 
 > Made with [contrib.rocks](https://contrib.rocks)
 
-## Sponsors
-
-This project is proudly supported by:
-
-<table>
-  <tbody>
-    <tr>
-      <td><strong>Gold sponsors</strong></td>
-    </tr>
-    <tr>
-      <td>
-        <a href="https://pro.reactbits.dev?utm_source=www.pdfcn.dev&utm_campaign=github_readme&utm_medium=sponsor">
-          <img src="apps/web/public/sponsors/reactbitpro.svg" alt="React Bits Pro" height="48" />
-        </a>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-> Found this project useful? [Sponsor us](https://pdfcn.vercel.app/sponsor) to help with support and maintenance.
-
 ## Stats
 
 ![Stats](https://repobeats.axiom.co/api/embed/a4ea68c4f6820d5e1cb0d2681ec946a89b945790.svg "Repobeats analytics image")
